@@ -13,14 +13,12 @@ username: Rocky_0013
 language_code: ru
 """
 
-
 async def bot_echo(message: types.Message):
     text = [
         "<em>Эхо без состояния.",
         "<b>Сообщение:</b></em>",
         message.text
     ]
-
     await message.answer('\n'.join(text), parse_mode="HTML")
 
 

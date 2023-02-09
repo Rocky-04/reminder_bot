@@ -5,7 +5,7 @@ __pycache__/
 
 # C extensions
 *.so
-
+*.env
 # Distribution / packaging
 .Python
 build/
@@ -61,3 +61,5 @@ venv.bak/
 .pyre/
 .idea/*
 .env
+db/pg.env
+*db
