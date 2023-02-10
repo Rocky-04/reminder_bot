@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sqlalchemy import Column, VARCHAR, BigInteger, DateTime, Uuid, Integer, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
@@ -72,10 +72,23 @@ class Notification(Base):
 
     id = Column(Uuid, unique=True, nullable=False, primary_key=True, default=uuid.uuid4)
     name = Column(VARCHAR(300), unique=False, nullable=True)
-    first_date = Column(DateTime)
-    next_data = Column(DateTime)
+    description = Column(VARCHAR(1000))
+    first_date = Column(DateTime, default=datetime.now)
+    next_data = Column(DateTime, nullable=True)
     periodicity = Column(ForeignKey(Periodicity.id))
     user = Column(ForeignKey(User.id))
 
     def __str__(self):
         return self.name
+
+
+class NotificationManager(BaseManager):
+    async def create(self, name, date, periodicity, user):
+        async with self.session() as session:
+            async with session.begin():
+                date = datetime.strptime(date, '%Y-%m-%d %H:%M')
+                next_date = date + timedelta(minutes=periodicity.interval)
+                print(next_date)
+                notification = Notification(name=name,  first_date=date, next_data=next_date, periodicity=periodicity.id, user=user.id)
+                session.add(notification)
+                return notification

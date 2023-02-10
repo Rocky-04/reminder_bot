@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher.middlewares import BaseMiddleware
-
-from tgbot.models.models import UserManager, Periodicity, PeriodicityManager
+from datetime import datetime
+from tgbot.models.models import UserManager, Periodicity, PeriodicityManager, NotificationManager
 
 
 class RegisterCheck(BaseMiddleware):
@@ -19,6 +19,11 @@ class RegisterCheck(BaseMiddleware):
         print(user)
 
         periodicity_manager = PeriodicityManager(session=session)
-        periodicity = await periodicity_manager.create(name='TEST_TEST', interval=3600)
+        periodicity = await periodicity_manager.create(name='One time an hour', interval=24*60)
         print(periodicity)
+
+        notification_manager = NotificationManager(session=session)
+        notification = await notification_manager.create(name='Go work', date='2023-02-10 22:00',
+                                                         periodicity=periodicity, user=user)
+        print(notification)
         return
