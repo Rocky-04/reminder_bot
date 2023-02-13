@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timedelta
 
-from sqlalchemy import Column, VARCHAR, BigInteger, DateTime, Uuid, Integer, ForeignKey
+from sqlalchemy import Column, VARCHAR, BigInteger, DateTime, Uuid, Integer, ForeignKey, select
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -10,6 +10,11 @@ Base = declarative_base()
 class BaseManager:
     def __init__(self, session):
         self.session = session
+
+    def to_dict(self):
+        return {
+            'session': self.session
+        }
 
 
 class User(Base):
@@ -66,12 +71,24 @@ class PeriodicityManager(BaseManager):
                 session.add(periodicity)
                 return periodicity
 
+    async def get_all(self):
+        async with self.session() as session:
+            async with session.begin():
+                result = await session.execute(select(Periodicity))
+                result = result.scalars().all()
+                return result
+
+    async def get(self, id):
+        async with self.session() as session:
+            async with session.begin():
+                return await session.get(Periodicity, id)
+
 
 class Notification(Base):
     __tablename__ = 'notifications'
 
     id = Column(Uuid, unique=True, nullable=False, primary_key=True, default=uuid.uuid4)
-    name = Column(VARCHAR(300), unique=False, nullable=True)
+    name = Column(VARCHAR(250), unique=False, nullable=True)
     description = Column(VARCHAR(1000))
     first_date = Column(DateTime, default=datetime.now)
     next_data = Column(DateTime, nullable=True)
@@ -83,12 +100,20 @@ class Notification(Base):
 
 
 class NotificationManager(BaseManager):
-    async def create(self, name, date, periodicity, user):
+    async def create(self, name, description, date, periodicity, user):
         async with self.session() as session:
             async with session.begin():
+                print('**************************************************************************')
+                print(date)
                 date = datetime.strptime(date, '%Y-%m-%d %H:%M')
+
+                manager = PeriodicityManager(self.session)
+                periodicity = await manager.get(periodicity)
+                print('/////////////////////////')
+                print(periodicity.interval)
                 next_date = date + timedelta(minutes=periodicity.interval)
                 print(next_date)
-                notification = Notification(name=name,  first_date=date, next_data=next_date, periodicity=periodicity.id, user=user.id)
+                notification = Notification(name=name, description=description, first_date=date, next_data=next_date,
+                                            periodicity=periodicity.id, user=user)
                 session.add(notification)
                 return notification

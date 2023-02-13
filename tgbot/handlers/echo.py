@@ -13,6 +13,7 @@ username: Rocky_0013
 language_code: ru
 """
 
+
 async def bot_echo(message: types.Message):
     text = [
         "<em>Эхо без состояния.",
@@ -31,10 +32,10 @@ async def bot_echo_all(message: types.Message, state: FSMContext):
     ]
     await message.answer('\n'.join(text))
 
-async def on_startгp(_):
-    print('Бот почав працювати!')
-
 
 def register_echo(dp: Dispatcher):
-    dp.register_message_handler(bot_echo)
-    dp.register_message_handler(bot_echo_all, state="*", content_types=types.ContentTypes.ANY)
+    pass
+# storage = dp.data['storage']
+# print(storage)
+# dp.register_message_handler(bot_echo)
+# dp.register_message_handler(bot_echo_all, state="*", content_types=types.ContentTypes.ANY)
