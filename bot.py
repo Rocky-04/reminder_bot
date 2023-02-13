@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from datetime import datetime
 
 from aiogram import Bot, types
 from aiogram import Dispatcher
@@ -17,6 +18,7 @@ from tgbot.handlers.user import register_user
 from tgbot.middlewares.environment import EnvironmentMiddleware
 from tgbot.middlewares.register_check import RegisterCheck
 from tgbot.models.models import Base, UserManager, PeriodicityManager, NotificationManager
+from tgbot.services.remind import remind
 
 logger = logging.getLogger(__name__)
 
@@ -27,39 +29,34 @@ async def create_test_data(bot):
     session = bot['session_maker']
 
     user_manager = UserManager(session=session)
-    user = await user_manager.get_or_create_user(id=1, name="OLEG_TEST")
+    user = await user_manager.get_or_create_user(id=5517586660, name="OLEG_TEST")
     print(user)
 
     periodicity_manager = PeriodicityManager(session=session)
-    periodicity = await periodicity_manager.create(name='One time an day', interval=24 * 60)
-    print(periodicity)
+
+    await periodicity_manager.create(name='Do not repeat', interval=0)
+    periodicity = await periodicity_manager.create(name='One time per minute', interval=1)
+    await periodicity_manager.create(name='One time per half hour', interval=30)
+    await periodicity_manager.create(name='One time per hour"', interval=60)
+    await periodicity_manager.create(name='One time per 3 hour', interval=3 * 60)
+    await periodicity_manager.create(name='One time per 1 day ', interval=24 * 60)
+    await periodicity_manager.create(name='One time per 3 days', interval=24*60*3)
+    await periodicity_manager.create(name='One time per 7 days', interval=24*60*7)
+    await periodicity_manager.create(name='One time per 30 day', interval=24*60*30)
+    await periodicity_manager.create(name='One time per 90 day', interval=24*60*90)
+    await periodicity_manager.create(name='One time per 180 day', interval=24*60*180)
+    await periodicity_manager.create(name='One time per 365 day', interval=24*60*365)
 
     notification_manager = NotificationManager(session=session)
-    notification = await notification_manager.create(name='Go work', description='', date='2023-02-10 22:00',
-                                                     periodicity=periodicity.id, user=user.id)
+    notification = await notification_manager.create(name='Go work', description='Some descriptions', date='2023-02-13 17:00',
+                                                     periodicity=periodicity, user=user.id)
     print(notification)
 
-    periodicity = await periodicity_manager.create(name='One time an hour', interval=1 * 60)
-    print(periodicity)
-
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-    periodicity = await periodicity_manager.create(name='One time an halfhour', interval=1 * 30)
-
-    print(periodicity)
-
-    periodicitys = await periodicity_manager.get_all()
-    print(periodicitys)
     print('-------------------------FINISH-----------------------------')
     return
+
+
+
 
 
 
@@ -89,7 +86,7 @@ async def main():
     config = load_config(".env")
 
     storage = RedisStorage2() if config.tg_bot.use_redis else MemoryStorage()
-    bot = Bot(token=config.tg_bot.token, parse_mode=types.ParseMode.HTML)
+    bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
     dp = Dispatcher(bot, storage=storage)
 
     bot['config'] = config
@@ -112,11 +109,16 @@ async def main():
     register_all_filters(dp)
     register_all_handlers(dp, bot)
 
+
+
     await create_test_data(bot)
+
+    asyncio.create_task(remind(bot=bot))
 
     # start
     try:
-        await dp.start_polling()
+        await dp.start_polling(dp)
+
     finally:
         await dp.storage.close()
         await dp.storage.wait_closed()
