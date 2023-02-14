@@ -31,23 +31,11 @@ class User(Base):
 
 
 class UserManager(BaseManager):
-    async def create(self, name):
-        user = User(name=name)
-        self.session.add(user)
-        self.session.commit()
-        return user
-
-    async def delete(self, user_id):
-        user = self.session.query(User).get(user_id)
-        self.session.delete(user)
-        self.session.commit()
-
     async def get_or_create_user(self, id: int, name: str):
         async with self.session() as session:
             async with session.begin():
                 user = await session.get(User, id)
                 if not user:
-                    print('___CREATE USER___', id)
                     user = User(id=id, name=name)
                     session.add(user)
                 return user
@@ -60,25 +48,6 @@ class Periodicity(Base):
     name = Column(VARCHAR(300), unique=False, nullable=True)
     interval = Column(Integer)
     notifications = relationship('Notification', back_populates="periodicity")
-
-    def __str__(self):
-        return self.name
-
-
-class Notification(Base):
-    __tablename__ = 'notifications'
-
-    id = Column(Uuid, unique=True, nullable=False, primary_key=True, default=uuid.uuid4)
-    name = Column(VARCHAR(250), unique=False, nullable=True)
-    description = Column(VARCHAR(1000))
-    first_date = Column(DateTime, default=datetime.now)
-    next_data = Column(DateTime, nullable=True)
-    # periodicity = Column(ForeignKey(Periodicity.id))
-    periodicity_id = mapped_column(ForeignKey(Periodicity.id))
-    periodicity= relationship('Periodicity', back_populates="notifications")
-
-
-    user = Column(ForeignKey(User.id))
 
     def __str__(self):
         return self.name
@@ -105,32 +74,42 @@ class PeriodicityManager(BaseManager):
                 return await session.get(Periodicity, id)
 
 
+class Notification(Base):
+    __tablename__ = 'notifications'
+
+    id = Column(Uuid, unique=True, nullable=False, primary_key=True, default=uuid.uuid4)
+    name = Column(VARCHAR(250), unique=False, nullable=True)
+    description = Column(VARCHAR(1000))
+    first_date = Column(DateTime, default=datetime.now)
+    next_data = Column(DateTime, nullable=True)
+    periodicity_id = mapped_column(ForeignKey(Periodicity.id))
+    periodicity= relationship('Periodicity', back_populates="notifications")
+    user = Column(ForeignKey(User.id))
+
+    def __str__(self):
+        return self.name
+
+
 class NotificationManager(BaseManager):
-    async def create(self, name, description, date, periodicity, user):
+    async def create(self, name, description, date, periodicity_id, user):
         async with self.session() as session:
             async with session.begin():
-                print('**************************************************************************')
-                print(date)
                 date = datetime.strptime(date, '%Y-%m-%d %H:%M')
-
-                # manager = PeriodicityManager(self.session)
-                # periodicity = await manager.get(periodicity)
-                print('/////////////////////////')
-                # print(periodicity.interval)
-                # next_date = date + timedelta(minutes=periodicity.interval)
                 next_date = date
-                print(next_date)
-                notification = Notification(name=name, description=description, first_date=date, next_data=next_date,
-                                            periodicity=periodicity, user=user)
+                notification = Notification(name=name,
+                                            description=description,
+                                            first_date=date,
+                                            next_data=next_date,
+                                            periodicity_id=periodicity_id,
+                                            user=user)
                 session.add(notification)
                 return notification
 
     async def get_all(self):
         async with self.session() as session:
             async with session.begin():
-                result = await session.execute(select(Notification).options(joinedload(Notification.periodicity))
-                .join(Periodicity, Notification.periodicity_id == Periodicity.id))
-
+                result = await session.execute(select(Notification).options(
+                    joinedload(Notification.periodicity)).join(Periodicity, Notification.periodicity_id == Periodicity.id))
                 result = result.scalars().all()
                 return result
 
@@ -143,4 +122,25 @@ class NotificationManager(BaseManager):
                 notification.next_data = next_data
                 session.add(notification)
                 return notification
+
+    async def get_users_all(self, user_id):
+        async with self.session() as session:
+            async with session.begin():
+                result = await session.execute(select(Notification).where(Notification.user==user_id).options(joinedload(Notification.periodicity))
+                .join(Periodicity, Notification.periodicity_id == Periodicity.id))
+
+                result = result.scalars().all()
+                return result
+
+    async def delete(self, id, user_id) -> bool:
+        async with self.session() as session:
+            async with session.begin():
+                notification = await session.execute(select(Notification).where(Notification.user == user_id, Notification.id == id))
+                notification = notification.scalar_one_or_none()
+                if notification:
+                    await session.delete(notification)
+                    return True
+                return False
+
+
 

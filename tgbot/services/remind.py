@@ -14,7 +14,7 @@ async def remind(bot: Bot) -> None:
      The function to remind the user of their scheduled reminders.
 
     :param bot: The bot instance.
-    :return:
+    :return: None
     """
     session = bot['session_maker']
     while True:
@@ -38,4 +38,4 @@ async def remind(bot: Bot) -> None:
                 except Exception as e:
                     logger.error("Error sending reminder: %s", e)
 
-        await asyncio.sleep(10)
+        await asyncio.sleep(50)
