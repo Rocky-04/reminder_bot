@@ -43,4 +43,4 @@ def register_get(dp: Dispatcher, bot: Bot):
     dp.register_message_handler(
         lambda message, session=session, bot=bot: get_notifications(message, session, bot),
         lambda message: message.text in ("get_notifications", "View My Reminders",
-                                         '/get_notifications Help', 'get' ,'/get'))
+                                         '/get_notifications Help', 'get', '/get'))

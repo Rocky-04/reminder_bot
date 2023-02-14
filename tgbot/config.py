@@ -2,6 +2,9 @@ from dataclasses import dataclass
 
 from environs import Env
 
+AVAILABLE_COMMANDS = ["/start", "/help", "/create", "/get", "/delete"]
+CREATOR = '@Rocky_0013'
+
 
 @dataclass
 class DbConfig:

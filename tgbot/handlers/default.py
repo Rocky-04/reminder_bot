@@ -23,7 +23,7 @@ async def get_help(message: Message) -> None:
             "to access our support resources. \n\n We're always looking for ways to improve our "
             "bot and offer more helpful features. If you have any suggestions for new repeat "
             "intervals or ideas for improving our bot, please don't hesitate to reach out to "
-            "the creator at @Rocky_0013. Your feedback is important to us and will help us "
+            "the creator at {@Rocky_0013}. Your feedback is important to us and will help us "
             "make our bot even better for you.")
     await message.reply(text, reply_markup=get_main_keyboards())
 

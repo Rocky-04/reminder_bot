@@ -5,27 +5,24 @@ from tgbot.models.models import UserManager, PeriodicityManager, NotificationMan
 
 
 class RegisterCheck(BaseMiddleware):
+    """
+    Middleware that checks if the user is registered in the system,
+    if not, it creates a new user instance.
+    """
+
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
 
-    async def on_process_update(self, update: types.Update, data: dict):
-        # print('****************************')
-        # print(update)
-        # print(update['message'])
-        # print(update['callback_query'])
-        # print(update.message)
-        # print(update.callback_query)
-        # print(user)
-        # print(user.id)
-        # print(user.first_name)
-        # print('****************************')
-        # user =  update.message['from']
-        # user_id = update.message['from']['id']
-        # user_name = update.message['from']['first_name']
-        # print(user_id, user_name)
-        # print('-------------------')
+    async def on_process_update(self, update: types.Update, data: dict) -> None:
+        """
+        Event handler that checks if the user is registered in the system.
+        If not, it creates a new user instance.
 
+        :param update: The incoming update.
+        :param data: The data dictionary.
+        :return: None
+        """
         user = update.message['from'] if update.message else update.callback_query['from']
         session = self.bot['session_maker']
         user_manager = UserManager(session=session)

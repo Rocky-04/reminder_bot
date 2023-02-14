@@ -4,8 +4,9 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from sqlalchemy.orm import sessionmaker
 
 from tgbot.filters.notifications import first_date_filter, name_filter, description_filter
+from tgbot.keyboards.inline import get_periodicity_keyboards
 from tgbot.keyboards.reply import get_create_keyboards, \
-    get_skip_description_keyboards, get_periodicity_keyboards, get_main_keyboards
+    get_skip_description_keyboards, get_main_keyboards
 from tgbot.models.models import NotificationManager
 
 
@@ -157,13 +158,13 @@ async def skip_description(message: types.Message, state: FSMContext) -> None:
 def register_create(dp: Dispatcher, bot: Bot) -> None:
     session = bot['session_maker']
     dp.register_message_handler(cancel_create,
-                                lambda message: message.text in ("cancel", "/cancel"),
+                                lambda message: message.text in ("Cancel", "/Cancel"),
                                 state=CreateNotification)
     dp.register_message_handler(back_create,
-                                lambda message: message.text in ("back", "/back"),
+                                lambda message: message.text in ("Back", "/Back"),
                                 state=CreateNotification)
     dp.register_message_handler(skip_description,
-                                lambda message: message.text in ("skip description",),
+                                lambda message: message.text in ("skip description", "Skip_Descriptions", "Skip Descriptions",),
                                 state=CreateNotification.description)
 
     dp.register_message_handler(create_notifications,

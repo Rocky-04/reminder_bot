@@ -1,14 +1,15 @@
 from aiogram import types, Dispatcher, Bot
 from sqlalchemy.orm import sessionmaker
 
-from tgbot.keyboards.reply import get_del_keyboards, get_main_keyboards
+from tgbot.keyboards.inline import get_del_keyboards
+from tgbot.keyboards.reply import  get_main_keyboards
 from tgbot.models.models import NotificationManager
 from tgbot.services.is_valid_uuid import is_valid_uuid
 
 
 async def del_notifications(message: types.Message, session: sessionmaker) -> None:
     """
-    Sends a message to the user with a keyboard to delete notifications.
+    Sends a message to the user with a keyboard to delete a notification.
     """
     user = message.from_user
     keyboard = await get_del_keyboards(session, user)
@@ -25,7 +26,7 @@ async def del_callback(callback: types.CallbackQuery, session: sessionmaker) -> 
     id = callback.data
     user = callback.from_user
     manager = NotificationManager(session)
-    result = await manager.delete(id, user_id=user.id)
+    result = await manager.delete(id=id, user_id=user.id)
     if result:
         await callback.answer('Done')
     else:
@@ -35,12 +36,18 @@ async def del_callback(callback: types.CallbackQuery, session: sessionmaker) -> 
 
 
 async def del_callback_main_menu(callback: types.CallbackQuery, bot: Bot) -> None:
+    """
+    Sends the user back to the main menu.
+    """
     user = callback.from_user
-    await bot.send_message(chat_id=user.id, text='Виберіть що потрібно зробити',
+    await bot.send_message(chat_id=user.id, text='Select what you want to do',
                            reply_markup=get_main_keyboards())
 
 
 def register_delete(dp: Dispatcher, bot: Bot) -> None:
+    """
+    Registers the delete notification functionality with the dispatcher.
+    """
     session = bot['session_maker']
 
     dp.register_message_handler(
