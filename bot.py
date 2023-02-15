@@ -18,7 +18,7 @@ from tgbot.handlers.get import register_get
 from tgbot.handlers.unknown import register_unknown
 from tgbot.middlewares.environment import EnvironmentMiddleware
 from tgbot.middlewares.register_check import RegisterCheck
-from tgbot.models.models import Base, UserManager, PeriodicityManager, NotificationManager
+from tgbot.models.models import Base
 from tgbot.services.default_data import get_default_data
 from tgbot.services.remind import remind
 
@@ -52,7 +52,8 @@ async def main():
     logger.info("Starting bot")
     config = load_config(".env")
 
-    storage = RedisStorage2(port=6380) if config.tg_bot.use_redis else MemoryStorage()
+    storage = RedisStorage2(host=config.redis.host,
+                            port=config.redis.port) if config.tg_bot.use_redis else MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode="HTML")
     dp = Dispatcher(bot, storage=storage)
 
@@ -65,7 +66,6 @@ async def main():
     )
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-
 
     async_sessionmaker = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
     bot["db"] = async_sessionmaker
