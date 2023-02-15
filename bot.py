@@ -79,7 +79,6 @@ async def main():
 
     asyncio.create_task(remind(bot=bot))
 
-    # start
     try:
         await dp.start_polling(dp)
 
