@@ -18,14 +18,14 @@ services:
     - tg_bot
 
 
-  redis:
+  my_redis:
     image: redis:7.0.5-alpine
     container_name: "REDIS-2"
     restart: always
     networks:
       - tg_bot
     ports:
-      - '6380:6380'
+      - '127.0.0.1:6380:6380/tcp'
 
 
 networks:
