@@ -39,7 +39,7 @@ async def get_notifications(message: types.Message, session: sessionmaker, bot: 
 
 
 def register_get(dp: Dispatcher, bot: Bot):
-    session = bot['session_maker']
+    session = bot['db']
     dp.register_message_handler(
         lambda message, session=session, bot=bot: get_notifications(message, session, bot),
         lambda message: message.text in ("get_notifications", "View My Reminders",

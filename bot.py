@@ -59,22 +59,23 @@ async def main():
     bot['config'] = config
 
     engine = create_async_engine(
-        f"postgresql+asyncpg://{config.db.user}:{config.db.password}@{config.db.host}/{config.db.database}",
+        (f"postgresql+asyncpg://{config.db.user}:{config.db.password}@"
+         f"{config.db.host}/{config.db.database}"),
         future=True
     )
     async with engine.begin() as conn:
-        # await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
-        # await get_default_data(bot)
+
 
     async_sessionmaker = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
     bot["db"] = async_sessionmaker
-    bot['session_maker'] = async_sessionmaker
     bot['storage'] = storage
 
     register_all_middlewares(dp, bot)
     register_all_filters(dp)
     register_all_handlers(dp, bot)
+
+    await get_default_data(bot)
 
     asyncio.create_task(remind(bot=bot))
 

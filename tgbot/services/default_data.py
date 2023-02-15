@@ -1,11 +1,21 @@
-from tgbot.models.models import UserManager, PeriodicityManager, NotificationManager
+import logging
+
+from tgbot.models.models import PeriodicityManager
+
+logger = logging.getLogger(__name__)
 
 
 async def get_default_data(bot) -> None:
-    print('-----------------create_test_data---------------------------')
-    session = bot['session_maker']
-    periodicity_manager = PeriodicityManager(session=session)
+    """
+    Create default periodicity records if none exist in the database.
 
+    :param bot: The bot instance.
+    :return: None
+    """
+    session = bot['db']
+    periodicity_manager = PeriodicityManager(session=session)
+    if await periodicity_manager.get_all():
+        return
     await periodicity_manager.create(name='Do not repeat', interval=0)
     await periodicity_manager.create(name='One time per half hour', interval=30)
     await periodicity_manager.create(name='One time per hour"', interval=60)
@@ -17,4 +27,5 @@ async def get_default_data(bot) -> None:
     await periodicity_manager.create(name='One time per 90 day', interval=24 * 60 * 90)
     await periodicity_manager.create(name='One time per 180 day', interval=24 * 60 * 180)
     await periodicity_manager.create(name='One time per 365 day', interval=24 * 60 * 365)
+    logger.info("----------create_default_data----------")
     return

@@ -17,11 +17,13 @@ async def remind(bot: Bot) -> None:
     :param bot: The bot instance.
     :return: None
     """
-    session = bot['session_maker']
+    session = bot['db']
     while True:
         notification_manager = NotificationManager(session=session)
         reminders = await notification_manager.get_all()
+
         for reminder in reminders:
+
             if reminder.next_data <= datetime.now():
                 next_data = await update_next_data(manager=notification_manager, reminder=reminder)
                 text = (f'<b>{reminder.name}</b>\n\n<u>{reminder.description}</u>\n'

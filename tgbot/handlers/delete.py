@@ -48,7 +48,7 @@ def register_delete(dp: Dispatcher, bot: Bot) -> None:
     """
     Registers the delete notification functionality with the dispatcher.
     """
-    session = bot['session_maker']
+    session = bot['db']
 
     dp.register_message_handler(
         lambda message, session=session: del_notifications(message, session),

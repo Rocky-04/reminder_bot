@@ -156,20 +156,24 @@ async def skip_description(message: types.Message, state: FSMContext) -> None:
 
 
 def register_create(dp: Dispatcher, bot: Bot) -> None:
-    session = bot['session_maker']
+    session = bot['db']
     dp.register_message_handler(cancel_create,
                                 lambda message: message.text in ("Cancel", "/Cancel"),
                                 state=CreateNotification)
+
     dp.register_message_handler(back_create,
                                 lambda message: message.text in ("Back", "/Back"),
                                 state=CreateNotification)
+
     dp.register_message_handler(skip_description,
-                                lambda message: message.text in ("skip description", "Skip_Descriptions", "Skip Descriptions",),
+                                lambda message: message.text in (
+                                    "skip description", "Skip_Descriptions", "Skip Descriptions",),
                                 state=CreateNotification.description)
 
     dp.register_message_handler(create_notifications,
                                 lambda message: message.text in ("create", "/create",
                                                                  "New Reminder"))
+
     dp.register_message_handler(add_name, state=CreateNotification.name)
     dp.register_message_handler(add_description, state=CreateNotification.description)
     dp.register_message_handler(

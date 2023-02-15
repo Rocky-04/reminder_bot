@@ -24,7 +24,7 @@ class RegisterCheck(BaseMiddleware):
         :return: None
         """
         user = update.message['from'] if update.message else update.callback_query['from']
-        session = self.bot['session_maker']
+        session = self.bot['db']
         user_manager = UserManager(session=session)
         await user_manager.get_or_create_user(id=user.id, name=user.first_name)
         return

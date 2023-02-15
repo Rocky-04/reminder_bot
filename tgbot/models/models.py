@@ -9,7 +9,7 @@ Base = declarative_base()
 
 
 class BaseManager:
-    """Base Manager for database models."""
+    """Base Manager for database manager models."""
 
     def __init__(self, session):
         self.session = session
