@@ -20,13 +20,13 @@ services:
 
   my_redis:
     image: redis:7.0.5-alpine
-    hostname: redis2
+    hostname: my_redis
     container_name: "REDIS-2"
     restart: always
     networks:
       - tg_bot
     ports:
-      - '127.0.0.1:6380:6380/tcp'
+      - '6380:6380'
 
 
 networks:
