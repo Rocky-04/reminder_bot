@@ -1,10 +1,10 @@
-# Reminder_Bot @Reminder013_Bot
+# Reminder_Bot   @Reminder013_Bot
 
-Reminder_Bot is a Telegram bot project built using the Python libraries aiograms and sqlalchemy. The bot's purpose is to help users set reminders and receive regular reminder messages on their mobile devices.
+Reminder_Bot is a Telegram bot project built using the Python libraries **aiogram** and **SQLAlchemy**. The bot's purpose is to help users set reminders and receive regular reminder messages on their mobile devices.
 
 To use the bot, a user can search for it in the Telegram app @Reminder013_Bot or click on the provided invite [link](https://t.me/Reminder013_Bot) to add it to their contacts. Once added, the user can create one-time or multiple reminders by interacting with the bot. The user can specify the date, time, and message content for the reminder using the bot's interface.
 
-The bot then stores the reminder details in a database using the SQLAlchemy library. The bot periodically checks the database for upcoming reminders, and when it's time for a reminder to be sent, the bot uses the aiograms library to send a reminder message to the user. The reminder message will include the message content that the user provided when creating the reminder.
+The bot then stores the reminder details in a database using the **SQLAlchemy** library. The bot periodically checks the database for upcoming reminders, and when it's time for a reminder to be sent, the bot uses the **aiogram** library to send a reminder message to the user. The reminder message will include the message content that the user provided when creating the reminder.
 
 The bot is designed to be reliable and easy to use, with a simple and intuitive interface that makes setting and managing reminders a breeze. It's a great tool for busy individuals who want to stay on top of their schedule and make sure they don't forget important tasks or appointments.
 
