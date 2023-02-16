@@ -12,7 +12,6 @@ services:
     - .:/usr/src/app/${BOT_NAME:-tg_bot}
     environment:
       - TZ=Europe/Kiev
-      - CURRENT_DATE_TIME=$(date +"%Y-%m-%d %H:%M:%S")
     command: python3 -m bot
     restart: always
     env_file:
@@ -32,7 +31,6 @@ services:
       - '6380:6380'
     environment:
       - TZ=Europe/Kiev
-      - CURRENT_DATE_TIME=$(date +"%Y-%m-%d %H:%M:%S")
 
 
 networks:
