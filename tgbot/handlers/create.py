@@ -62,7 +62,7 @@ async def add_description(message: types.Message, state: FSMContext) -> None:
 
     await CreateNotification.next()
     await message.reply(("Enter the first date and time of the notification in the format:\n\n "
-                         " <b>2024-01-30 12:00</b>"),
+                         " <b>2023-02-20 10:00</b>"),
                         reply_markup=get_create_keyboards())
 
 
@@ -75,7 +75,7 @@ async def add_first_date(message: types.Message, state: FSMContext, session: ses
         if not await first_date_filter(message.text):
             await message.reply(
                 "Invalid date and time format. Enter the data in the format:\n\n "
-                "<b>2024-01-30 12:00</b>. \n This date must be in the future.")
+                "<b>2023-02-20 10:00</b>. \n This date must be in the future.")
             return
 
         data['first_date'] = message.text
@@ -142,7 +142,7 @@ async def skip_description(message: types.Message, state: FSMContext) -> None:
     await CreateNotification.next()
     await message.reply(
         ("Description skipped.\n Enter the data in the format:\n\n "
-         "<b>2024-01-30 12:00</b>. \n This date must be in the future."))
+         "<b>2023-02-20 10:00</b>. \n This date must be in the future."))
 
 
 def register_create(dp: Dispatcher, bot: Bot) -> None:
