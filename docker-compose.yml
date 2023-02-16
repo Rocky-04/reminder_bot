@@ -10,6 +10,9 @@ services:
     working_dir: "/usr/src/app/${BOT_NAME:-tg_bot}"
     volumes:
     - .:/usr/src/app/${BOT_NAME:-tg_bot}
+    environment:
+      - TZ=Europe/Kiev
+      - CURRENT_DATE_TIME=$(date +"%Y-%m-%d %H:%M:%S")
     command: python3 -m bot
     restart: always
     env_file:
@@ -27,6 +30,9 @@ services:
       - tg_bot
     ports:
       - '6380:6380'
+    environment:
+      - TZ=Europe/Kiev
+      - CURRENT_DATE_TIME=$(date +"%Y-%m-%d %H:%M:%S")
 
 
 networks:

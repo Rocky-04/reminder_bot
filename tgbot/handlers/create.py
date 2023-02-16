@@ -22,19 +22,6 @@ class CreateNotification(StatesGroup):
     first_date = State("Enter the first date and time of the notification")
     periodicity = State("Select the periodicity of the notification")
 
-    @staticmethod
-    async def get_description() -> str:
-        """
-        Get the description of the current state.
-        """
-        state = Dispatcher.get_current().current_state()
-        state_name = await state.get_state()
-        parts = state_name.split(':')
-        if len(parts) > 1:
-            return parts[1].strip()
-        else:
-            return state_name
-
 
 async def create_notifications(message: types.Message) -> None:
     """
@@ -137,9 +124,12 @@ async def back_create(message: types.Message, state: FSMContext) -> None:
     """
     Goes back to the previous step in the notification creation process.
     """
-    await CreateNotification.previous()
-    text = await CreateNotification().get_description()
-    await message.reply(text)
+    previous_state = await CreateNotification.previous()
+    if previous_state is None:
+        await state.finish()
+        await message.reply("Notification creation cancelled", reply_markup=get_main_keyboards())
+        return
+    await message.reply(previous_state)
 
 
 async def skip_description(message: types.Message, state: FSMContext) -> None:
