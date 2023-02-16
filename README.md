@@ -1,10 +1,19 @@
-#
-## About the template
+# Reminder_Bot @Reminder013_Bot (https://t.me/Reminder013_Bot)
+
+Reminder_Bot is a Telegram bot project built using the Python libraries aiograms and sqlalchemy. The bot's purpose is to help users set reminders and receive regular reminder messages on their mobile devices.
+
+To use the bot, a user can search for it in the Telegram app or click on the provided invite link to add it to their contacts. Once added, the user can create one-time or multiple reminders by interacting with the bot. The user can specify the date, time, and message content for the reminder using the bot's interface.
+
+The bot then stores the reminder details in a database using the SQLAlchemy library. The bot periodically checks the database for upcoming reminders, and when it's time for a reminder to be sent, the bot uses the aiograms library to send a reminder message to the user. The reminder message will include the message content that the user provided when creating the reminder.
+
+The bot is designed to be reliable and easy to use, with a simple and intuitive interface that makes setting and managing reminders a breeze. It's a great tool for busy individuals who want to stay on top of their schedule and make sure they don't forget important tasks or appointments.
+
+## About the structure
 
 **Structure:**
 
 ```
-tgbot_template/
+tgbot/
 ├── bot.py
 ├── tgbot/
 │   ├── __init__.py
@@ -86,23 +95,6 @@ handlers that respond to different types of messages.
 For example, it might register an event handler that responds to commands that are sent by authorized users, such as
 the `/echo` command, which causes the bot to repeat the text of the message back to the user.
 
-### `tgbot/handlers/echo.py`
-
-The `echo.py` file defines a `register_echo` function, which is used to register an event handler for the `/echo`
-command.
-This event handler is responsible for repeating the text of the message back to the user. The `register_echo` function
-takes a `Dispatcher` object as its parameter, and it uses this object to register the `/echo` command handler.
-
-### `tgbot/handlers/user.py`
-
-The `user.py` file defines a `register_user` function, which is used to register event handlers for messages that are
-sent
-by non-authorized users (i.e., users who are not listed in the ADMINS configuration setting).
-
-The `register_user` function takes a `Dispatcher` object as its parameter, and it uses this object to register event
-handlers that respond to different types of messages. For example, it might register an event handler that responds to
-commands that are sent by non-authorized users, such as the `/help` command, which causes the bot to send a message with
-a list of available commands.
 
 ### `tgbot/middlewares/environment.py`
 
@@ -184,7 +176,7 @@ communicate with each other.
 
 ## Dockerfile
 The `Dockerfile` defines the instructions for building the Docker image that is used by the bot service. The file begins
-by specifying the base image that should be used for the image, which in this case is `python:3.9-buster`. The `ENV`
+by specifying the base image that should be used for the image, which in this case is `python:3.11`. The `ENV`
 instruction sets the value of the `BOT_NAME` environment variable, which is used by the `WORKDIR` instruction to specify the
 working directory for the container.
 
