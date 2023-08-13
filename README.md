@@ -1,4 +1,4 @@
-# Reminder_Bot   @Reminder013_Bot
+# Reminder_Bot 
 
 Reminder_Bot is a Telegram bot project built using the Python libraries **aiogram** and **SQLAlchemy**. The bot's purpose is to help users set reminders and receive regular reminder messages on their mobile devices.
 
