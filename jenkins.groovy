@@ -1,0 +1,1 @@
+RUN_TYPES = ["start"]
